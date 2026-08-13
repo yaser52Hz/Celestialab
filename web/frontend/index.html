@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Celestial Mechanics Simulator</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: sans-serif;
+            background: #111;
+            color: #eee;
+        }
+
+        header {
+            padding: 20px;
+            border-bottom: 1px solid #333;
+        }
+
+        main {
+            padding: 20px;
+        }
+
+        button {
+            padding: 10px 16px;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+
+        pre {
+            background: #1b1b1b;
+            padding: 15px;
+            overflow: auto;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>Celestial Mechanics Simulator</h1>
+</header>
+
+<main>
+
+    <button id="create-button">
+        Create Simulation
+    </button>
+
+    <button id="step-button" disabled>
+        Step
+    </button>
+
+    <h2>Simulation</h2>
+
+    <pre id="output">No simulation created.</pre>
+
+</main>
+
+
+<script>
+
+let simulationId = null;
+
+
+async function createSimulation() {
+
+    const response = await fetch("/api/simulations", {
+        method: "POST",
+
+        headers: {
+            "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+            bodies: [
+                {
+                    name: "Sun",
+                    mass: 1.989e30,
+                    position: [0, 0, 0],
+                    velocity: [0, 0, 0]
+                },
+
+                {
+                    name: "Earth",
+                    mass: 5.972e24,
+                    position: [1.496e11, 0, 0],
+                    velocity: [0, 29780, 0]
+                }
+            ]
+        })
+    });
+
+    const data = await response.json();
+
+    simulationId = data.id;
+
+    document.getElementById("step-button").disabled = false;
+
+    document.getElementById("output").textContent =
+        JSON.stringify(data, null, 2);
+}
+
+
+async function stepSimulation() {
+
+    const response = await fetch(
+        `/api/simulations/${simulationId}/step`,
+        {
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+                dt: 3600,
+                steps: 1
+            })
+        }
+    );
+
+    const data = await response.json();
+
+    document.getElementById("output").textContent =
+        JSON.stringify(data, null, 2);
+}
+
+
+document
+    .getElementById("create-button")
+    .addEventListener("click", createSimulation);
+
+
+document
+    .getElementById("step-button")
+    .addEventListener("click", stepSimulation);
+
+</script>
+
+</body>
+</html>
