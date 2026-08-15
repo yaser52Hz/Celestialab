@@ -1,0 +1,1180 @@
+/* ============================================================
+   GLOBAL
+   ============================================================ */
+
+#root {
+  width: 100%;
+  height: 100%;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+
+  margin: 0;
+  padding: 0;
+
+  overflow: hidden;
+
+  background: #080a0f;
+
+  font-family:
+    Inter,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+
+/* ============================================================
+   APP
+   ============================================================ */
+
+.app {
+  width: 100%;
+  height: 100dvh;
+
+  display: flex;
+  flex-direction: column;
+
+  overflow: hidden;
+
+  background: #080a0f;
+
+  color: #f4f5f7;
+}
+
+
+/* ============================================================
+   TOP BAR
+   ============================================================ */
+
+.topbar {
+  position: relative;
+
+  height: 60px;
+  min-height: 60px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0 18px;
+
+  background:
+    rgba(12, 15, 22, 0.94);
+
+  border-bottom:
+    1px solid
+    rgba(255, 255, 255, 0.07);
+
+  z-index: 100;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+
+  gap: 9px;
+
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.brand-mark {
+  font-size: 19px;
+}
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+
+  gap: 8px;
+}
+
+.icon-button,
+.run-button {
+  height: 36px;
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.09);
+
+  border-radius: 9px;
+
+  background:
+    rgba(255, 255, 255, 0.045);
+
+  color: inherit;
+
+  cursor: pointer;
+
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.15s ease;
+}
+
+.icon-button {
+  width: 36px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+
+  font-size: 15px;
+}
+
+.run-button {
+  display: flex;
+  align-items: center;
+
+  gap: 7px;
+
+  padding: 0 14px;
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.icon-button:hover,
+.run-button:hover {
+  background:
+    rgba(255, 255, 255, 0.09);
+
+  border-color:
+    rgba(255, 255, 255, 0.15);
+}
+
+.icon-button:active,
+.run-button:active {
+  transform: scale(0.97);
+}
+
+
+/* ============================================================
+   WORKSPACE
+   ============================================================ */
+
+.workspace {
+  position: relative;
+
+  flex: 1;
+
+  min-height: 0;
+
+  overflow: hidden;
+}
+
+
+/* ============================================================
+   SIMULATION SCENE
+   ============================================================ */
+
+.simulation-scene {
+  position: absolute;
+
+  inset: 0;
+
+  overflow: hidden;
+
+  background: #090c12;
+
+  touch-action: none;
+
+  user-select: none;
+
+  cursor: default;
+}
+
+
+/* ------------------------------------------------------------
+   Scene cursor states
+   ------------------------------------------------------------ */
+
+.simulation-scene.dragging {
+  cursor: grabbing;
+}
+
+.simulation-scene.placing-object {
+  cursor: crosshair;
+}
+
+
+/* ============================================================
+   WORLD
+   ============================================================ */
+
+.scene-world {
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  width: 0;
+  height: 0;
+
+  overflow: visible;
+
+  transform-origin: 0 0;
+
+  pointer-events: none;
+}
+
+
+/* ============================================================
+   GRID
+   ============================================================ */
+
+.scene-grid {
+  position: absolute;
+
+  left: -50000px;
+  top: -50000px;
+
+  width: 100000px;
+  height: 100000px;
+
+  background-image:
+    linear-gradient(
+      rgba(255, 255, 255, 0.045) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.045) 1px,
+      transparent 1px
+    );
+
+  background-size: 40px 40px;
+
+  pointer-events: none;
+}
+
+
+/* ============================================================
+   AXES
+   ============================================================ */
+
+.scene-axis {
+  position: absolute;
+
+  pointer-events: none;
+}
+
+.axis-x {
+  left: -50000px;
+  top: 0;
+
+  width: 100000px;
+  height: 1px;
+
+  background:
+    rgba(255, 255, 255, 0.24);
+}
+
+.axis-y {
+  left: 0;
+  top: -50000px;
+
+  width: 1px;
+  height: 100000px;
+
+  background:
+    rgba(255, 255, 255, 0.24);
+}
+
+
+/* ============================================================
+   ORIGIN
+   ============================================================ */
+
+.origin {
+  position: absolute;
+
+  left: 0;
+  top: 0;
+
+  width: 0;
+  height: 0;
+
+  pointer-events: none;
+}
+
+.origin-dot {
+  position: absolute;
+
+  left: -4px;
+  top: -4px;
+
+  width: 8px;
+  height: 8px;
+
+  border-radius: 50%;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 0 0 2px
+      rgba(255, 255, 255, 0.12),
+
+    0 0 12px
+      rgba(255, 255, 255, 0.35);
+}
+
+
+/* ============================================================
+   AXIS LABELS
+   ============================================================ */
+
+.axis-label {
+  position: absolute;
+
+  color:
+    rgba(255, 255, 255, 0.5);
+
+  font-size: 12px;
+
+  font-weight: 500;
+
+  pointer-events: none;
+}
+
+.axis-label-x {
+  left: 12px;
+  top: 8px;
+}
+
+.axis-label-y {
+  left: 8px;
+  top: -22px;
+}
+
+
+/* ============================================================
+   SCENE OBJECTS
+   ============================================================ */
+
+.scene-object {
+  position: absolute;
+
+  width: 30px;
+  height: 30px;
+
+  padding: 0;
+
+  border: none;
+
+  background: transparent;
+
+  transform:
+    translate(-50%, -50%);
+
+  pointer-events: auto;
+
+  z-index: 10;
+
+  cursor: grab;
+}
+
+.scene-object:active {
+  cursor: grabbing;
+}
+
+.scene-object-dot {
+  display: block;
+
+  width: 14px;
+  height: 14px;
+
+  margin: 8px;
+
+  border-radius: 50%;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 0 0 2px
+      rgba(255, 255, 255, 0.15),
+
+    0 0 14px
+      rgba(255, 255, 255, 0.35);
+
+  transition:
+    width 0.12s ease,
+    height 0.12s ease,
+    margin 0.12s ease,
+    box-shadow 0.12s ease;
+}
+
+.scene-object.selected
+.scene-object-dot {
+  width: 18px;
+  height: 18px;
+
+  margin: 6px;
+
+  box-shadow:
+    0 0 0 2px
+      rgba(255, 255, 255, 0.35),
+
+    0 0 18px
+      rgba(255, 255, 255, 0.55);
+}
+
+
+/* ============================================================
+   PLACEMENT
+   ============================================================ */
+
+.placement-hint {
+  position: absolute;
+
+  top: 18px;
+  left: 50%;
+
+  transform:
+    translateX(-50%);
+
+  padding: 8px 14px;
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.08);
+
+  border-radius: 8px;
+
+  background:
+    rgba(8, 10, 15, 0.82);
+
+  color:
+    rgba(255, 255, 255, 0.75);
+
+  font-size: 12px;
+
+  backdrop-filter:
+    blur(10px);
+
+  pointer-events: none;
+
+  z-index: 50;
+}
+
+
+/* ============================================================
+   SCENE OVERLAY
+   ============================================================ */
+
+.scene-overlay {
+  position: absolute;
+
+  inset: 0;
+
+  z-index: 100;
+
+  pointer-events: none;
+}
+
+
+/* ============================================================
+   COORDINATES
+   ============================================================ */
+
+.cursor-coordinates {
+  position: absolute;
+
+  left: 14px;
+  top: 14px;
+
+  display: grid;
+
+  grid-template-columns:
+    auto auto;
+
+  column-gap: 7px;
+  row-gap: 2px;
+
+  min-width: 105px;
+
+  padding: 8px 10px;
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.08);
+
+  border-radius: 8px;
+
+  background:
+    rgba(8, 10, 15, 0.78);
+
+  color:
+    rgba(255, 255, 255, 0.62);
+
+  font-family:
+    "SFMono-Regular",
+    Consolas,
+    "Liberation Mono",
+    monospace;
+
+  font-size: 11px;
+
+  line-height: 1.4;
+
+  backdrop-filter:
+    blur(10px);
+
+  pointer-events: none;
+}
+
+
+/* ============================================================
+   SCENE CONTROLS
+   ============================================================ */
+
+.scene-controls {
+  position: absolute;
+
+  right: 14px;
+  bottom: 48px;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 5px;
+
+  pointer-events: auto;
+}
+
+.scene-controls button {
+  width: 34px;
+  height: 34px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.09);
+
+  border-radius: 8px;
+
+  background:
+    rgba(10, 13, 20, 0.82);
+
+  color:
+    rgba(255, 255, 255, 0.8);
+
+  cursor: pointer;
+
+  backdrop-filter:
+    blur(10px);
+
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+
+.scene-controls button:hover {
+  background:
+    rgba(255, 255, 255, 0.1);
+
+  color: #ffffff;
+}
+
+.scene-controls button.active {
+  background:
+    rgba(255, 255, 255, 0.16);
+
+  color: #ffffff;
+}
+
+
+/* ============================================================
+   ZOOM INDICATOR
+   ============================================================ */
+
+.zoom-indicator {
+  position: absolute;
+
+  right: 14px;
+  bottom: 14px;
+
+  padding: 7px 9px;
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.08);
+
+  border-radius: 7px;
+
+  background:
+    rgba(8, 10, 15, 0.72);
+
+  color:
+    rgba(255, 255, 255, 0.5);
+
+  font-size: 11px;
+
+  backdrop-filter:
+    blur(8px);
+
+  pointer-events: none;
+}
+
+
+/* ============================================================
+   SCENE TOOLBAR
+   ============================================================ */
+
+.scene-toolbar {
+  position: absolute;
+
+  left: 16px;
+  top: 50%;
+
+  transform:
+    translateY(-50%);
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 6px;
+
+  padding: 6px;
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.08);
+
+  border-radius: 12px;
+
+  background:
+    rgba(10, 12, 18, 0.78);
+
+  backdrop-filter:
+    blur(14px);
+
+  box-shadow:
+    0 8px 30px
+    rgba(0, 0, 0, 0.25);
+
+  z-index: 200;
+
+  pointer-events: auto;
+}
+
+.scene-toolbar button {
+  width: 38px;
+  height: 38px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+
+  border: none;
+
+  border-radius: 8px;
+
+  background: transparent;
+
+  color:
+    rgba(255, 255, 255, 0.65);
+
+  font-size: 17px;
+
+  cursor: pointer;
+
+  transition:
+    background 0.15s ease,
+    color 0.15s ease,
+    transform 0.1s ease;
+}
+
+.scene-toolbar button:hover {
+  background:
+    rgba(255, 255, 255, 0.08);
+
+  color: #ffffff;
+}
+
+.scene-toolbar button:active {
+  transform: scale(0.94);
+}
+
+.scene-toolbar button.active {
+  background:
+    rgba(255, 255, 255, 0.14);
+
+  color: #ffffff;
+}
+
+.scene-toolbar button.active.danger {
+  color: #ff6b6b;
+}
+
+
+/* ============================================================
+   BOTTOM TOOLBAR
+   ============================================================ */
+
+.bottom-toolbar {
+  height: 64px;
+  min-height: 64px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0 14px;
+
+  background:
+    rgba(12, 15, 22, 0.96);
+
+  border-top:
+    1px solid
+    rgba(255, 255, 255, 0.07);
+
+  z-index: 100;
+}
+
+.tool-group {
+  display: flex;
+  align-items: center;
+
+  gap: 4px;
+}
+
+.tool-button {
+  min-width: 72px;
+  height: 50px;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 3px;
+
+  padding: 0;
+
+  border: 0;
+
+  border-radius: 9px;
+
+  background: transparent;
+
+  color:
+    rgba(255, 255, 255, 0.52);
+
+  cursor: pointer;
+
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+
+.tool-button:hover {
+  background:
+    rgba(255, 255, 255, 0.05);
+
+  color:
+    rgba(255, 255, 255, 0.85);
+}
+
+.tool-button.active {
+  background:
+    rgba(255, 255, 255, 0.08);
+
+  color: #ffffff;
+}
+
+.tool-icon {
+  font-size: 17px;
+
+  line-height: 1;
+}
+
+.tool-label {
+  font-size: 10px;
+}
+
+
+/* ============================================================
+   TOOL PANEL
+   ============================================================ */
+
+.tool-panel {
+  position: absolute;
+
+  left: 18px;
+  top: 18px;
+  bottom: 18px;
+
+  width: 280px;
+
+  display: flex;
+  flex-direction: column;
+
+  background:
+    rgba(15, 18, 27, 0.96);
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.09);
+
+  border-radius: 14px;
+
+  box-shadow:
+    0 20px 60px
+    rgba(0, 0, 0, 0.4);
+
+  backdrop-filter:
+    blur(18px);
+
+  z-index: 300;
+
+  overflow: hidden;
+}
+
+.panel-header {
+  height: 58px;
+  min-height: 58px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0 16px;
+
+  border-bottom:
+    1px solid
+    rgba(255, 255, 255, 0.07);
+}
+
+.panel-header h2 {
+  margin: 0;
+
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.panel-close {
+  width: 30px;
+  height: 30px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+
+  border: 0;
+
+  border-radius: 7px;
+
+  background: transparent;
+
+  color:
+    rgba(255, 255, 255, 0.5);
+
+  font-size: 20px;
+
+  cursor: pointer;
+}
+
+.panel-close:hover {
+  background:
+    rgba(255, 255, 255, 0.06);
+
+  color: #ffffff;
+}
+
+.panel-content {
+  flex: 1;
+
+  min-height: 0;
+
+  padding: 14px;
+
+  overflow-y: auto;
+}
+
+.panel-action {
+  width: 100%;
+  height: 42px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  padding: 0;
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.1);
+
+  border-radius: 9px;
+
+  background:
+    rgba(255, 255, 255, 0.05);
+
+  color: #ffffff;
+
+  font-size: 13px;
+
+  cursor: pointer;
+}
+
+.panel-action:hover {
+  background:
+    rgba(255, 255, 255, 0.09);
+}
+
+.empty-state {
+  padding: 32px 10px;
+
+  text-align: center;
+
+  color:
+    rgba(255, 255, 255, 0.35);
+
+  font-size: 12px;
+}
+
+.tool-list {
+  display: flex;
+  flex-direction: column;
+
+  gap: 5px;
+}
+
+.tool-list button {
+  width: 100%;
+
+  padding: 11px 12px;
+
+  text-align: left;
+
+  border: 0;
+
+  border-radius: 8px;
+
+  background: transparent;
+
+  color:
+    rgba(255, 255, 255, 0.65);
+
+  cursor: pointer;
+}
+
+.tool-list button:hover {
+  background:
+    rgba(255, 255, 255, 0.06);
+
+  color: #ffffff;
+}
+
+
+/* ============================================================
+   FULLSCREEN
+   ============================================================ */
+
+.app:fullscreen {
+  width: 100%;
+  height: 100dvh;
+
+  background: #080a0f;
+}
+
+.app:-webkit-full-screen {
+  width: 100%;
+  height: 100dvh;
+
+  background: #080a0f;
+}
+
+
+/* ============================================================
+   MOBILE
+   ============================================================ */
+
+@media (max-width: 700px) {
+  .topbar {
+    height: 54px;
+    min-height: 54px;
+
+    padding: 0 12px;
+  }
+
+  .brand {
+    font-size: 14px;
+  }
+
+  .run-button {
+    padding: 0 11px;
+  }
+
+  .bottom-toolbar {
+    height: 68px;
+    min-height: 68px;
+
+    padding: 0 5px;
+  }
+
+  .tool-group {
+    flex: 1;
+
+    justify-content: space-around;
+  }
+
+  .tool-button {
+    min-width: 0;
+
+    flex: 1;
+
+    height: 54px;
+  }
+
+  .tool-label {
+    font-size: 9px;
+  }
+
+  .tool-panel {
+    left: 8px;
+    right: 8px;
+
+    top: auto;
+    bottom: 8px;
+
+    width: auto;
+
+    height:
+      min(60vh, 460px);
+
+    border-radius: 16px;
+
+    animation:
+      panel-up 0.18s ease-out;
+  }
+
+  .scene-toolbar {
+    left: 10px;
+
+    padding: 5px;
+
+    gap: 4px;
+  }
+
+  .scene-toolbar button {
+    width: 36px;
+    height: 36px;
+  }
+
+  .scene-controls {
+    right: 10px;
+    bottom: 10px;
+  }
+
+  .cursor-coordinates {
+    left: 10px;
+    top: 10px;
+  }
+
+  .zoom-indicator {
+    right: 10px;
+    bottom: 58px;
+  }
+}
+
+
+/* ============================================================
+   MOBILE SMALL
+   ============================================================ */
+
+@media (max-width: 420px) {
+  .topbar {
+    padding: 0 8px;
+  }
+
+  .brand {
+    gap: 6px;
+
+    font-size: 13px;
+  }
+
+  .brand-mark {
+    font-size: 17px;
+  }
+
+  .icon-button {
+    width: 34px;
+    height: 34px;
+  }
+
+  .run-button {
+    height: 34px;
+
+    padding: 0 9px;
+
+    font-size: 12px;
+  }
+
+  .scene-toolbar {
+    left: 7px;
+  }
+
+  .scene-toolbar button {
+    width: 34px;
+    height: 34px;
+  }
+
+  .scene-controls button {
+    width: 34px;
+    height: 34px;
+  }
+}
+
+
+/* ============================================================
+   PANEL ANIMATION
+   ============================================================ */
+
+@keyframes panel-up {
+  from {
+    opacity: 0;
+
+    transform:
+      translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+
+    transform:
+      translateY(0);
+  }
+}
