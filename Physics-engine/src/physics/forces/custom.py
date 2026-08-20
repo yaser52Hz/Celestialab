@@ -1,6 +1,6 @@
 # src/physics/forces/custom.py
 import numpy as np
-from typing import List, Callable, Dict, Any, Optional
+from typing import List, Callable, Dict, Any, Optional  # ✅ Added Optional
 from .base import Force
 from ...core.body import CelestialBody
 
@@ -14,7 +14,7 @@ class AnyForce(Force):
         self,
         force_function: Callable,
         name: str = "Custom Force",
-        params: Optional[Dict[str, Any]] = None,
+        params: Optional[Dict[str, Any]] = None,  # ✅ Now Optional is defined
         description: str = ""
     ):
         """

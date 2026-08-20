@@ -1,7 +1,7 @@
 # src/core/body.py
 import numpy as np
 from dataclasses import dataclass, field
-from typing import List, Optional
+from typing import List, Optional, Dict, Any  # ✅ Added Optional import
 from uuid import uuid4
 
 @dataclass
@@ -29,11 +29,11 @@ class CelestialBody:
     radius: float = 1.0
     color: str = "#ffffff"
     id: str = field(default_factory=lambda: str(uuid4()))
-    prev_position: Optional[np.ndarray] = None
+    prev_position: Optional[np.ndarray] = None  # ✅ Now Optional is defined
     trail: List[np.ndarray] = field(default_factory=list)
     max_trail_length: int = 1000
-    charge: float = 0.0  # Optional for electromagnetic forces
-    custom_properties: dict = field(default_factory=dict)
+    charge: float = 0.0
+    custom_properties: Dict[str, Any] = field(default_factory=dict)
     
     def __post_init__(self):
         """Ensure position and velocity are numpy arrays"""
@@ -49,7 +49,7 @@ class CelestialBody:
         if len(self.trail) > self.max_trail_length:
             self.trail.pop(0)
     
-    def to_dict(self) -> dict:
+    def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary for serialization"""
         return {
             'id': self.id,
@@ -60,12 +60,12 @@ class CelestialBody:
             'radius': self.radius,
             'color': self.color,
             'charge': self.charge,
-            'trail': [p.tolist() for p in self.trail[-100:]],  # Last 100 points
+            'trail': [p.tolist() for p in self.trail[-100:]],
             'custom_properties': self.custom_properties
         }
     
     @classmethod
-    def from_dict(cls, data: dict) -> 'CelestialBody':
+    def from_dict(cls, data: Dict[str, Any]) -> 'CelestialBody':
         """Create body from dictionary"""
         return cls(
             name=data['name'],
