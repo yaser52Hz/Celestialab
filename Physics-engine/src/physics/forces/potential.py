@@ -1,29 +1,19 @@
 # src/physics/forces/potential.py
 import numpy as np
-from typing import List, Callable, Dict, Any, Optional  # ✅ Added Optional
+from typing import List, Callable, Dict, Any, Optional
 from .base import Force
 from ...core.body import CelestialBody
 
 class PotentialForce(Force):
-    """
-    Force derived from a scalar potential.
-    F = -∇Φ(r)
-    """
+    """Force derived from a scalar potential. F = -∇Φ(r)"""
     
     def __init__(
         self,
         potential_function: Callable,
         name: str = "Potential Force",
-        params: Optional[Dict[str, Any]] = None,  # ✅ Now Optional is defined
+        params: Optional[Dict[str, Any]] = None,
         epsilon: float = 1e-8
     ):
-        """
-        Args:
-            potential_function: Φ(r) where r is position vector
-            name: Name of the force
-            params: Parameters for the potential
-            epsilon: Step size for numerical differentiation
-        """
         self._name = name
         self.potential = potential_function
         self.params = params or {}
@@ -40,7 +30,6 @@ class PotentialForce(Force):
             pos = body.position
             force = np.zeros(3)
             
-            # Numerical gradient: F = -∇Φ
             for i in range(3):
                 pos_plus = pos.copy()
                 pos_minus = pos.copy()

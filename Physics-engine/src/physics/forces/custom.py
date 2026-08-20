@@ -1,30 +1,19 @@
 # src/physics/forces/custom.py
 import numpy as np
-from typing import List, Callable, Dict, Any, Optional  # ✅ Added Optional
+from typing import List, Callable, Dict, Any, Optional
 from .base import Force
 from ...core.body import CelestialBody
 
 class AnyForce(Force):
-    """
-    Completely custom force defined by user function.
-    Supports any mathematical expression or logic.
-    """
+    """Completely custom force defined by user function."""
     
     def __init__(
         self,
         force_function: Callable,
         name: str = "Custom Force",
-        params: Optional[Dict[str, Any]] = None,  # ✅ Now Optional is defined
+        params: Optional[Dict[str, Any]] = None,
         description: str = ""
     ):
-        """
-        Args:
-            force_function: Function with signature:
-                (bodies: List[CelestialBody], time: float, **params) -> List[np.ndarray]
-            name: Name of the force
-            params: Parameters passed to the function
-            description: Description of the force
-        """
         self._name = name
         self.force_function = force_function
         self.params = params or {}

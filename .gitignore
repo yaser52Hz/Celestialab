@@ -342,7 +342,7 @@ logs/
 # ============================================================
 
 # Temporary Python test scripts
-test*.py
+# test*.py
 
 # Temporary test artifacts
 test-output/

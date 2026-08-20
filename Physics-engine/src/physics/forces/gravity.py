@@ -6,10 +6,7 @@ from ...core.body import CelestialBody
 from ...core.constants import G
 
 class GravityForce(Force):
-    """
-    Newtonian gravitational force.
-    F = -G * m1 * m2 / r² * r_hat
-    """
+    """Newtonian gravitational force."""
     
     def __init__(self, gravitational_constant: float = G, softening: float = 1e-6):
         self.G = gravitational_constant
@@ -32,7 +29,6 @@ class GravityForce(Force):
                 dist_sq = np.dot(diff, diff) + self.softening**2
                 dist = np.sqrt(dist_sq)
                 
-                # a = G * m_j / r³ * r
                 acc_mag = self.G * bodies[j].mass / (dist_sq * dist)
                 accelerations[i] += acc_mag * diff
         
