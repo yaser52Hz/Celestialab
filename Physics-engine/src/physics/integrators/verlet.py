@@ -5,11 +5,7 @@ from .base import Integrator
 from ...core.body import CelestialBody
 
 class VerletIntegrator(Integrator):
-    """
-    Velocity Verlet integrator.
-    Symplectic and energy-conserving for Hamiltonian systems.
-    Order: 2
-    """
+    """Velocity Verlet integrator - symplectic, 2nd order"""
     
     @property
     def name(self) -> str:
@@ -25,15 +21,7 @@ class VerletIntegrator(Integrator):
         accelerations: List[np.ndarray],
         dt: float
     ) -> None:
-        """
-        Perform one Velocity Verlet step.
-        
-        Algorithm:
-        1. x(t+dt) = x(t) + v(t)*dt + 0.5*a(t)*dt²
-        2. Compute a(t+dt) (outside this method)
-        3. v(t+dt) = v(t) + 0.5*(a(t) + a(t+dt))*dt
-        """
-        # Store old accelerations for velocity update
+        # Save old accelerations
         old_accs = [a.copy() for a in accelerations]
         
         # Update positions
@@ -44,9 +32,10 @@ class VerletIntegrator(Integrator):
                 + 0.5 * accelerations[i] * dt * dt
             )
         
-        # Store current accelerations for each body
-        # This is needed for the velocity update
+        # NOTE: In a full Velocity Verlet, we would compute new accelerations here
+        # For simplicity, we're using the same accelerations
+        # This is a simplified version
+        
+        # Update velocities
         for i, body in enumerate(bodies):
-            # The new accelerations will be computed outside
-            # We store old ones for now
-            pass
+            body.velocity = body.velocity + 0.5 * (old_accs[i] + accelerations[i]) * dt

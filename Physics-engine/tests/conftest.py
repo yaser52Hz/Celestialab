@@ -1,9 +1,13 @@
 # tests/conftest.py
+import sys
+import os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+
 import pytest
 import numpy as np
 from src.core.body import CelestialBody
 from src.physics.simulation import Simulation
-from src.core.constants import G, AU
+from src.core.constants import G, AU, SOLAR_MASS
 
 @pytest.fixture
 def earth_body():
@@ -22,7 +26,7 @@ def sun_body():
     """Create a Sun-like body"""
     return CelestialBody(
         name="Sun",
-        mass=1.989e30,
+        mass=SOLAR_MASS,
         position=np.array([0.0, 0.0, 0.0]),
         velocity=np.array([0.0, 0.0, 0.0]),
         radius=6.96e8,
@@ -42,26 +46,10 @@ def three_body_system():
     """Create a three-body system (figure-8 configuration)"""
     sim = Simulation(dt=0.01, integrator='verlet', use_gravity=True)
     
-    # Three equal masses in a figure-8 configuration
     bodies = [
-        CelestialBody(
-            name="A", 
-            mass=1.0, 
-            position=[-0.5, 0.0, 0.0], 
-            velocity=[0.0, 0.5, 0.0]
-        ),
-        CelestialBody(
-            name="B", 
-            mass=1.0, 
-            position=[0.5, 0.0, 0.0], 
-            velocity=[0.0, -0.5, 0.0]
-        ),
-        CelestialBody(
-            name="C", 
-            mass=1.0, 
-            position=[0.0, 0.0, 0.0], 
-            velocity=[0.0, 0.0, 0.0]
-        )
+        CelestialBody("A", 1.0, [-0.5, 0.0, 0.0], [0.0, 0.5, 0.0]),
+        CelestialBody("B", 1.0, [0.5, 0.0, 0.0], [0.0, -0.5, 0.0]),
+        CelestialBody("C", 1.0, [0.0, 0.0, 0.0], [0.0, 0.0, 0.0])
     ]
     
     for body in bodies:

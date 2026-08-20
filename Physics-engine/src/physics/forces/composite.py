@@ -1,64 +1,41 @@
-# src/physics/forces/potential.py
+# src/physics/forces/composite.py
 import numpy as np
-from typing import List, Callable, Dict, Any, Optional  # ✅ Added Optional
+from typing import List
 from .base import Force
 from ...core.body import CelestialBody
 
-class PotentialForce(Force):
+class CompositeForce(Force):
     """
-    Force derived from a scalar potential.
-    F = -∇Φ(r)
+    Combine multiple forces into one.
+    Total force = sum of all forces.
     """
     
-    def __init__(
-        self,
-        potential_function: Callable,
-        name: str = "Potential Force",
-        params: Optional[Dict[str, Any]] = None,  # ✅ Now Optional is defined
-        epsilon: float = 1e-8
-    ):
-        """
-        Args:
-            potential_function: Φ(r) where r is position vector
-            name: Name of the force
-            params: Parameters for the potential
-            epsilon: Step size for numerical differentiation
-        """
+    def __init__(self, forces: List[Force], name: str = "Composite Force"):
+        self.forces = forces
         self._name = name
-        self.potential = potential_function
-        self.params = params or {}
-        self.epsilon = epsilon
     
     @property
     def name(self) -> str:
         return self._name
     
     def compute(self, bodies: List[CelestialBody], time: float = 0.0) -> List[np.ndarray]:
-        forces = []
+        n = len(bodies)
+        total_accs = [np.zeros(3) for _ in range(n)]
         
-        for body in bodies:
-            pos = body.position
-            force = np.zeros(3)
-            
-            # Numerical gradient: F = -∇Φ
-            for i in range(3):
-                pos_plus = pos.copy()
-                pos_minus = pos.copy()
-                pos_plus[i] += self.epsilon
-                pos_minus[i] -= self.epsilon
-                
-                phi_plus = self.potential(pos_plus, **self.params)
-                phi_minus = self.potential(pos_minus, **self.params)
-                
-                force[i] = -(phi_plus - phi_minus) / (2 * self.epsilon)
-            
-            forces.append(force)
+        for force in self.forces:
+            accs = force.compute(bodies, time)
+            for i in range(n):
+                total_accs[i] += accs[i]
         
-        return forces
+        return total_accs
     
-    def to_dict(self) -> Dict[str, Any]:
+    def add_force(self, force: Force) -> None:
+        """Add another force to the composite"""
+        self.forces.append(force)
+    
+    def to_dict(self) -> dict:
         return {
-            'type': 'PotentialForce',
+            'type': 'CompositeForce',
             'name': self._name,
-            'params': self.params
+            'forces': [f.to_dict() for f in self.forces]
         }

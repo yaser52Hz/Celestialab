@@ -1,41 +1,33 @@
-# src/physics/forces/composite.py
-import numpy as np
-from typing import List
-from ....src.physics.forces.base import Force
-from ....src.core.body import CelestialBody
+# tests/unit/test_forces/test_composite.py
+import sys
+import os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../..'))
 
-class CompositeForce(Force):
-    """
-    Combine multiple forces into one.
-    Total force = sum of all forces.
-    """
-    
-    def __init__(self, forces: List[Force], name: str = "Composite Force"):
-        self.forces = forces
-        self._name = name
-    
-    @property
-    def name(self) -> str:
-        return self._name
-    
-    def compute(self, bodies: List[CelestialBody], time: float = 0.0) -> List[np.ndarray]:
-        n = len(bodies)
-        total_accs = [np.zeros(3) for _ in range(n)]
+import pytest
+import numpy as np
+from src.core.body import CelestialBody
+from src.physics.forces.custom import AnyForce
+from src.physics.forces.composite import CompositeForce
+
+class TestCompositeForce:
+    def test_composite_basic(self):
+        def force1(bodies, time, a=1.0):
+            return [a * np.array([1.0, 0.0, 0.0]) for _ in bodies]
         
-        for force in self.forces:
-            accs = force.compute(bodies, time)
-            for i in range(n):
-                total_accs[i] += accs[i]
+        def force2(bodies, time, b=2.0):
+            return [b * np.array([0.0, 1.0, 0.0]) for _ in bodies]
         
-        return total_accs
-    
-    def add_force(self, force: Force) -> None:
-        """Add another force to the composite"""
-        self.forces.append(force)
-    
-    def to_dict(self) -> dict:
-        return {
-            'type': 'CompositeForce',
-            'name': self._name,
-            'forces': [f.to_dict() for f in self.forces]
-        }
+        f1 = AnyForce(force1, name="Force1", params={'a': 1.0})
+        f2 = AnyForce(force2, name="Force2", params={'b': 2.0})
+        
+        composite = CompositeForce([f1, f2], name="Combined")
+        
+        body = CelestialBody(
+            name="Test",
+            mass=1.0,
+            position=[0, 0, 0],
+            velocity=[0, 0, 0]
+        )
+        
+        accs = composite.compute([body])
+        assert np.allclose(accs[0], [1.0, 2.0, 0.0])

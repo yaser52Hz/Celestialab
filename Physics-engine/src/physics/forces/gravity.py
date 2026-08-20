@@ -9,7 +9,7 @@ class GravityForce(Force):
     """Newtonian gravitational force."""
     
     def __init__(self, gravitational_constant: float = G, softening: float = 1e-6):
-        self.G = gravitational_constant
+        self.G = gravitational_constant  # ✅ اینجا G است
         self.softening = softening
     
     @property
