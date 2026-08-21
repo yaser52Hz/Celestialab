@@ -9,6 +9,7 @@ export function useSimulation() {
   const [isRunning, setIsRunning] = useState(false)
   const [time, setTime] = useState(0)
   const [loading, setLoading] = useState(false)
+  const [ws, setWs] = useState(null)
 
   const fetchState = useCallback(async (id) => {
     if (!id) return
@@ -28,7 +29,7 @@ export function useSimulation() {
     try {
       const res = await simulationApi.create({
         name: 'Celestial Simulation',
-        dt: 3600,
+        dt: 60,
         integrator: 'verlet'
       })
       const id = res.data.id
@@ -84,12 +85,14 @@ export function useSimulation() {
 
   const step = useCallback(async (steps = 1) => {
     if (!simId) return
+    setLoading(true)
     try {
       await simulationApi.step(simId, steps)
       await fetchState(simId)
     } catch (err) {
       console.error('Step error:', err)
     }
+    setLoading(false)
   }, [simId, fetchState])
 
   const clear = useCallback(async () => {
@@ -109,14 +112,37 @@ export function useSimulation() {
     createSimulation()
   }, [])
 
-  // Auto-step when running
+  // WebSocket connection for real-time updates
   useEffect(() => {
-    if (!isRunning) return
-    const interval = setInterval(() => {
-      step(1)
-    }, 100)
-    return () => clearInterval(interval)
-  }, [isRunning, step])
+    if (!simId) return
+
+    const ws = new WebSocket(`ws://localhost:8000/ws/simulation/${simId}`)
+    setWs(ws)
+
+    ws.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data)
+        setBodies(data.bodies || [])
+        setState(data)
+        setTime(data.time || 0)
+        setIsRunning(data.is_running || false)
+      } catch (err) {
+        console.error('WebSocket parse error:', err)
+      }
+    }
+
+    ws.onerror = (error) => {
+      console.error('WebSocket error:', error)
+    }
+
+    ws.onclose = () => {
+      console.log('WebSocket disconnected')
+    }
+
+    return () => {
+      ws.close()
+    }
+  }, [simId])
 
   return {
     simId,
