@@ -1,19 +1,20 @@
+import uuid
+import numpy as np
+from typing import Dict, List, Optional, Any
+from datetime import datetime
 import sys
 import os
+
+# api/app/services/simulation_manager.py
 import uuid
 import numpy as np
 from typing import Dict, List, Optional, Any
 from datetime import datetime
 
-# HARDCODE the absolute path to physics_engine
-PHYSICS_PATH = r"D:\celestialab\physics_engine\src"
-if PHYSICS_PATH not in sys.path:
-    sys.path.insert(0, PHYSICS_PATH)
+from engine.core.body import CelestialBody
+from engine.physics.simulation import Simulation
+from engine.physics.forces.custom import AnyForce
 
-# Now import directly from src
-from core.body import CelestialBody
-from physics.simulation import Simulation
-from physics.forces.custom import AnyForce
 
 class SimulationManager:
     """Manages all active simulations (Singleton)"""

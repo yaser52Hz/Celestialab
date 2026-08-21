@@ -1,0 +1,45 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background: #0a0e1a;
+  color: #e8edf5;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.app {
+  display: flex;
+  height: 100vh;
+}
+
+.sidebar {
+  width: 340px;
+  min-width: 340px;
+  background: #0f1629;
+  border-right: 1px solid #1a2744;
+  padding: 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  height: 100vh;
+}
+
+.sidebar header h1 {
+  font-size: 20px;
+  font-weight: 400;
+  color: #4a9eff;
+  letter-spacing: 1px;
+}
+
+.scene-container {
+  flex: 1;
+  position: relative;
+  background: #0a0e1a;
+  height: 100vh;
+}

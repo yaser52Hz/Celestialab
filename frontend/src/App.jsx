@@ -1,121 +1,92 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+// src/App.jsx
+import React from 'react'
+import { useSimulation } from './hooks/useSimulation'
+import { Scene } from './components/Scene/Scene'
+import { InfoPanel } from './components/UI/InfoPanel'
+import { HUD } from './components/UI/HUD'
+import './styles/globals.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const {
+    bodies,
+    state,
+    isRunning,
+    time,
+    loading,
+    addBody,
+    removeBody,
+    start,
+    stop,
+    step,
+    clear,
+  } = useSimulation()
+
+  const addEarth = () => {
+    addBody({
+      name: 'Earth',
+      mass: 5.972e24,
+      position: [1.496e11, 0, 0],
+      velocity: [0, 2.978e4, 0],
+      radius: 6.37e6,
+      color: '#4B9CD3'
+    })
+  }
+
+  const addSun = () => {
+    addBody({
+      name: 'Sun',
+      mass: 1.989e30,
+      position: [0, 0, 0],
+      velocity: [0, 0, 0],
+      radius: 6.96e8,
+      color: '#FDB813'
+    })
+  }
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <div className="app">
+      <aside className="sidebar">
+        <header>
+          <h1>🌌 Celestial Engine</h1>
+        </header>
 
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
+        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+          <button className="btn btn-success" onClick={addSun} disabled={loading}>
+            ☀️ Sun
+          </button>
+          <button className="btn btn-primary" onClick={addEarth} disabled={loading}>
+            🌍 Earth
+          </button>
+          <button className="btn btn-success" onClick={start} disabled={isRunning || loading}>
+            ▶ Start
+          </button>
+          <button className="btn btn-danger" onClick={stop} disabled={!isRunning || loading}>
+            ⏹ Stop
+          </button>
+          <button className="btn btn-secondary" onClick={() => step(1)} disabled={isRunning || loading}>
+            ⏭ Step
+          </button>
+          <button className="btn btn-secondary" onClick={clear} disabled={loading}>
+            🗑 Clear
+          </button>
         </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+        <div style={{ fontSize: 13, color: '#8ba0c4' }}>
+          <div>Bodies: <span style={{ color: '#e8edf5' }}>{bodies.length}</span></div>
+          <div>Time: <span style={{ color: '#e8edf5' }}>{time.toFixed(0)}s</span></div>
+          <div>Status: <span style={{ color: isRunning ? '#00d4aa' : '#ff6b6b' }}>
+            {isRunning ? '▶ Running' : '⏸ Paused'}
+          </span></div>
+        </div>
+
+        <InfoPanel state={state} />
+      </aside>
+
+      <main className="scene-container">
+        <Scene bodies={bodies} />
+        <HUD bodyCount={bodies.length} time={time} isRunning={isRunning} />
+      </main>
+    </div>
   )
 }
 
